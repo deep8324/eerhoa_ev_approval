@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EERHOA – Resident EV Charger Installation Application</title>
+  <!-- PDF.js to render uploaded BESCOM approval PDFs directly into the printable packet -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root {
       --primary: #0f4c81;
       --primary-dark: #093256;
-      --accent: #0d9488;
       --bg: #f4f6f9;
       --card: #ffffff;
       --text: #1e293b;
@@ -25,9 +26,7 @@
       --ok-text: #065f46;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -75,16 +74,12 @@
       object-fit: contain;
     }
 
-    .header-title-group {
-      flex: 1 1 280px;
-    }
-
+    .header-title-group { flex: 1 1 280px; }
     .header-title-group h1 {
       margin: 0 0 4px;
       font-size: 1.35rem;
       color: var(--primary-dark);
     }
-
     .header-title-group p {
       margin: 2px 0;
       color: var(--muted);
@@ -129,18 +124,11 @@
     }
 
     @media (max-width: 680px) {
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-      .header-card {
-        justify-content: center;
-        text-align: center;
-      }
+      .grid-2 { grid-template-columns: 1fr; }
+      .header-card { justify-content: center; text-align: center; }
     }
 
-    .field-group {
-      margin-bottom: 14px;
-    }
+    .field-group { margin-bottom: 14px; }
 
     label {
       display: block;
@@ -149,23 +137,15 @@
       margin-bottom: 6px;
     }
 
-    .req {
-      color: var(--error-border);
-    }
-
-    .opt {
-      color: var(--muted);
-      font-weight: 400;
-      font-size: 0.84rem;
-    }
+    .req { color: var(--error-border); }
+    .opt { color: var(--muted); font-weight: 400; font-size: 0.84rem; }
 
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     input[type="number"],
     input[type="date"],
-    select,
-    textarea {
+    select {
       width: 100%;
       padding: 11px 12px;
       font-size: 1rem;
@@ -176,9 +156,7 @@
       transition: border-color 0.15s ease, background-color 0.15s ease;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: var(--primary);
     }
@@ -189,7 +167,6 @@
       font-weight: 600;
     }
 
-    /* Error styling required by user */
     .is-invalid {
       border-color: var(--error-border) !important;
       background-color: var(--error-bg) !important;
@@ -203,9 +180,7 @@
       margin-top: 5px;
     }
 
-    .error-msg.visible {
-      display: block;
-    }
+    .error-msg.visible { display: block; }
 
     .banner {
       border-radius: 8px;
@@ -296,39 +271,6 @@
       border-color: #fca5a5;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 13px 22px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-dark);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .receipt-box {
-      border: 2px solid var(--primary);
-      border-radius: 10px;
-      padding: 18px;
-      background: #fff;
-      margin-top: 16px;
-    }
-
     .fm-note {
       background: #f1f5f9;
       border-radius: 8px;
@@ -337,615 +279,319 @@
       color: #334155;
       margin-top: 10px;
     }
+
+    .hidden { display: none !important; }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .btn-primary, .btn-secondary {
+      border: none;
+      border-radius: 8px;
+      padding: 13px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1 1 220px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .btn-secondary:hover { background: #cbd5e1; }
+
+    /* Printable Application Record */
+    .print-sheet {
+      background: #fff;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .print-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .print-header img {
+      width: 76px;
+      height: 76px;
+      object-fit: contain;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+    }
+
+    .summary-table th, .summary-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .summary-table th {
+      background: #f1f5f9;
+      width: 34%;
+      color: #0f172a;
+    }
+
+    .fm-approval-box {
+      border: 1.5px solid #334155;
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8fafc;
+      margin-top: 14px;
+      font-size: 0.9rem;
+    }
+
+    .attachment-pages {
+      margin-top: 20px;
+    }
+
+    .attachment-page-item {
+      page-break-before: always;
+      break-before: page;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      margin-top: 16px;
+      background: #fff;
+      text-align: center;
+    }
+
+    .attachment-page-item img,
+    .attachment-page-item canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 8px auto 0;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .container { max-width: 100%; padding: 0; }
+      .print-sheet {
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+      .attachment-page-item {
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header & EERHOA Branding -->
-    <div class="header-card">
-      <div class="logo-box">
-        <img src="./eerhoa-logo.jpg" alt="EERHOA Circular Logo" />
-      </div>
-      <div class="header-title-group">
-        <h1>Resident EV Charger Installation Application</h1>
-        <p><strong>Assetz Earth &amp; Essence Row House Owners Association (EERHOA)</strong>, North Bengaluru – 562157</p>
-        <p>Paperless Digital Registration &amp; Load Compliance Form</p>
-        <a class="bescom-link" href="https://bescom.karnataka.gov.in/storage/pdf-files/EV/FAQsonEVCS.pdf" target="_blank" rel="noopener noreferrer">
-          View Official BESCOM EV Charging FAQ &amp; Guidelines (PDF)
-        </a>
-      </div>
-    </div>
-
-    <form id="evForm" novalidate>
-      <!-- Section 1: Resident & Unit Details -->
-      <div class="section-card">
-        <h2 class="section-title">Section 1: Resident &amp; Row House Details</h2>
-        <div class="grid-2">
-          <div class="field-group" id="group-unitNumber">
-            <label for="unitNumber">Row House / Unit Number <span class="req">*</span></label>
-            <select id="unitNumber" name="unitNumber">
-              <option value="">-- Select Unit (101 to 712) --</option>
-            </select>
-            <div class="error-msg" id="err-unitNumber">Please select your Row House / Unit number.</div>
-          </div>
-
-          <div class="field-group" id="group-residentName">
-            <label for="residentName">Resident / Applicant Full Name <span class="req">*</span></label>
-            <input type="text" id="residentName" name="residentName" placeholder="Enter full name" />
-            <div class="error-msg" id="err-residentName">Please enter the resident's full name.</div>
-          </div>
-
-          <div class="field-group" id="group-email">
-            <label for="email">Email Address (for Digital Receipt) <span class="req">*</span></label>
-            <input type="email" id="email" name="email" placeholder="name@example.com" />
-            <div class="error-msg" id="err-email">Please enter a valid email address.</div>
-          </div>
-
-          <div class="field-group" id="group-phone">
-            <label for="phone">Mobile Number <span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" />
-            <div class="error-msg" id="err-phone">Please enter a valid mobile number.</div>
-          </div>
+    <!-- Form View (Hidden automatically during Print/PDF Save) -->
+    <div id="formWrapper" class="no-print">
+      <div class="header-card">
+        <div class="logo-box">
+          <img src="./eerhoa-logo.jpg" alt="EERHOA Circular Logo" />
+        </div>
+        <div class="header-title-group">
+          <h1>Resident EV Charger Installation Application</h1>
+          <p><strong>Assetz Earth &amp; Essence Row House Owners Association (EERHOA)</strong>, North Bengaluru – 562157</p>
+          <p>Fill out the form below, generate the PDF packet, and submit it to the EERHOA Facility Manager for approval.</p>
+          <a class="bescom-link" href="https://bescom.karnataka.gov.in/storage/pdf-files/EV/FAQsonEVCS.pdf" target="_blank" rel="noopener noreferrer">
+            Official BESCOM EV Charging FAQ &amp; Guidelines (PDF)
+          </a>
         </div>
       </div>
 
-      <!-- Section 2: EV Charger Specifications -->
-      <div class="section-card">
-        <h2 class="section-title">Section 2: EV Charger Specifications</h2>
-        <div class="grid-2">
-          <div class="field-group" id="group-phaseType">
-            <label for="phaseType">Power Connection Type <span class="req">*</span></label>
-            <select id="phaseType" name="phaseType">
-              <option value="">-- Select Connection Type --</option>
-              <option value="Single-Phase">Single-Phase (230V AC)</option>
-              <option value="Three-Phase">Three-Phase (415V AC)</option>
-            </select>
-            <div class="error-msg" id="err-phaseType">Please select Single-Phase or Three-Phase.</div>
-          </div>
-
-          <div class="field-group" id="group-ratedPowerKw">
-            <label for="ratedPowerKw">Charger Rated Power (kW) <span class="req">*</span></label>
-            <select id="ratedPowerKw" name="ratedPowerKw">
-              <option value="">-- Select Charger Rated Power --</option>
-              <option value="3.3">3.3 kW</option>
-              <option value="7.2">7.2 kW</option>
-              <option value="7.4">7.4 kW</option>
-              <option value="11">11.0 kW</option>
-              <option value="22">22.0 kW</option>
-            </select>
-            <div class="error-msg" id="err-ratedPowerKw">Please select the charger's rated power in kW.</div>
-          </div>
-
-          <div class="field-group" id="group-configuredPowerKw">
-            <label for="configuredPowerKw">Configured Charger Power (kW) <span class="req">*</span></label>
-            <input type="number" id="configuredPowerKw" name="configuredPowerKw" step="0.1" min="0.5" max="22" placeholder="e.g., 4.0" />
-            <div class="error-msg" id="err-configuredPowerKw">Please enter a valid configured charger power in kW.</div>
-          </div>
-
-          <div class="field-group">
-            <label for="estimatedCurrentA">Estimated Current (Amps – Auto Calculated)</label>
-            <input type="text" id="estimatedCurrentA" name="estimatedCurrentA" readonly value="0.0 A" />
-          </div>
-
-          <div class="field-group" id="group-chargerMakeModel">
-            <label for="chargerMakeModel">EV Charger Make &amp; Model <span class="req">*</span></label>
-            <input type="text" id="chargerMakeModel" name="chargerMakeModel" placeholder="e.g., Exicom / ABB / OEM Wallbox" />
-            <div class="error-msg" id="err-chargerMakeModel">Please enter the EV charger make and model.</div>
-          </div>
-
-          <div class="field-group" id="group-installerName">
-            <label for="installerName">EV OEM / Authorised Installer / Agency Name <span class="req">*</span></label>
-            <input type="text" id="installerName" name="installerName" placeholder="Installer or OEM agency name" />
-            <div class="error-msg" id="err-installerName">Please enter the installer or OEM agency name.</div>
-          </div>
-
-          <div class="field-group">
-            <label for="licenceNumber">Electrical Licence / Registration No. <span class="opt">(Optional)</span></label>
-            <input type="text" id="licenceNumber" name="licenceNumber" placeholder="Optional contractor licence number" />
-          </div>
-
-          <div class="field-group">
-            <label for="earthingDetails">Dedicated Earthing &amp; Cable Spec</label>
-            <input type="text" id="earthingDetails" name="earthingDetails" readonly value="Dual MCB (2P/4P) + 30mA RCBO + Copper Armoured Cable" />
-          </div>
-        </div>
-
-        <div class="topology-box">
-          <strong>Mandatory Wiring &amp; Protection Rules:</strong>
-          <div>• Tap-off must be taken from the <strong>BESCOM supply side before ACCL</strong>.</div>
-          <div>• Install <strong>2 sets of MCBs</strong> (<strong>2-Pole</strong> for Single-Phase; <strong>4-Pole</strong> for Three-Phase) plus <strong>30mA RCBO</strong> earth-leakage protection and <strong>armoured cable</strong> with dedicated earthing.</div>
-          <div class="topology-flow">
-            <span class="node-chip">BESCOM Supply</span>
-            <span>→</span>
-            <span class="node-chip" id="mcbSpecBadge">MCB Set #1 + RCBO</span>
-            <span>→</span>
-            <span class="node-chip">MCB Set #2 (Charger Side)</span>
-            <span>→</span>
-            <span class="node-chip">EV Charger</span>
-            <span>|</span>
-            <span class="node-chip blocked">No DG Connection – ACCL Bypassed</span>
-          </div>
-        </div>
-
-        <div class="fm-note">
-          <strong>Facility Manager Phase Allocation (Single-Phase Chargers):</strong> For single-phase EV chargers, the <strong>EERHOA Facility Manager</strong> will assign the specific phase (<strong>R</strong>, <strong>Y</strong>, or <strong>B</strong>) during technical verification based on the Row House and estate load-balancing assessment.
-        </div>
-      </div>
-
-      <!-- Section 3: BESCOM Sanctioned Load & Headroom Validation -->
-      <div class="section-card">
-        <h2 class="section-title">Section 3: BESCOM Sanctioned Load &amp; Home Load Headroom</h2>
-
-        <h3 class="subsection-title">3A. Initial BESCOM Sanctioned Load <span class="req">*</span></h3>
-        <div class="grid-2">
-          <div class="field-group" id="group-initialLoadKw">
-            <label for="initialLoadKw">Initial Sanctioned Load for Unit (kW)</label>
-            <input type="number" id="initialLoadKw" name="initialLoadKw" readonly placeholder="Select Unit in Section 1" />
-            <div class="error-msg" id="err-initialLoadKw">Select a Row House unit to populate the initial BESCOM sanctioned load.</div>
-          </div>
-
-          <div class="field-group">
-            <label for="requiredHeadroomKw">Mandatory Reserved Home Load (kW)</label>
-            <input type="text" id="requiredHeadroomKw" name="requiredHeadroomKw" readonly value="—" />
-          </div>
-        </div>
-
-        <h3 class="subsection-title">3B. Revised BESCOM Sanctioned Load <span class="opt">(Optional – Only if Additional Load Approved)</span></h3>
-        <div class="checkbox-row">
-          <input type="checkbox" id="hasRevisedLoad" name="hasRevisedLoad" />
-          <label for="hasRevisedLoad">I have obtained revised / additional sanctioned load approval from BESCOM after possession.</label>
-        </div>
-
-        <div id="revisedLoadFields" class="hidden">
+      <form id="evForm" novalidate>
+        <!-- Section 1 -->
+        <div class="section-card">
+          <h2 class="section-title">Section 1: Resident &amp; Row House Details</h2>
           <div class="grid-2">
-            <div class="field-group" id="group-revisedLoadKw">
-              <label for="revisedLoadKw">Total Revised BESCOM Sanctioned Load (kW) <span class="req">*</span></label>
-              <input type="number" id="revisedLoadKw" name="revisedLoadKw" step="0.5" min="1" placeholder="Enter revised kW" />
-              <div class="error-msg" id="err-revisedLoadKw">Please enter the revised total BESCOM sanctioned load in kW.</div>
+            <div class="field-group" id="group-unitNumber">
+              <label for="unitNumber">Row House / Unit Number <span class="req">*</span></label>
+              <select id="unitNumber" name="unitNumber">
+                <option value="">-- Select Unit (101 to 712) --</option>
+              </select>
+              <div class="error-msg" id="err-unitNumber">Please select your Row House / Unit number.</div>
             </div>
 
-            <div class="field-group" id="group-approvalFile">
-              <label for="approvalFile">Attach Revised BESCOM Load Approval (PDF / Image) <span class="req">*</span></label>
-              <input type="file" id="approvalFile" name="approvalFile" accept=".pdf,.png,.jpg,.jpeg,.webp" />
-              <div class="error-msg" id="err-approvalFile">Please attach your BESCOM revised load approval document.</div>
+            <div class="field-group" id="group-residentName">
+              <label for="residentName">Resident / Applicant Full Name <span class="req">*</span></label>
+              <input type="text" id="residentName" name="residentName" placeholder="Enter full name" />
+              <div class="error-msg" id="err-residentName">Please enter the resident's full name.</div>
+            </div>
+
+            <div class="field-group" id="group-email">
+              <label for="email">Email Address <span class="req">*</span></label>
+              <input type="email" id="email" name="email" placeholder="name@example.com" />
+              <div class="error-msg" id="err-email">Please enter a valid email address.</div>
+            </div>
+
+            <div class="field-group" id="group-phone">
+              <label for="phone">Mobile Number <span class="req">*</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" />
+              <div class="error-msg" id="err-phone">Please enter a valid 10-digit mobile number.</div>
             </div>
           </div>
-          <div id="fileInfoBox" class="hidden" style="font-size: 0.88rem; color: var(--muted); margin-bottom: 10px;"></div>
         </div>
 
-        <div id="loadValidationBanner" class="banner banner-warn">
-          <strong>Headroom Rule:</strong> Without additional BESCOM load approval, charger configuration must leave at least <strong>3 kW</strong> home load for <strong>7 kW</strong> units, <strong>4 kW</strong> for <strong>9 kW</strong> units, and <strong>5 kW</strong> for <strong>11 kW</strong> units.
+        <!-- Section 2 -->
+        <div class="section-card">
+          <h2 class="section-title">Section 2: EV Charger Specifications</h2>
+          <div class="grid-2">
+            <div class="field-group" id="group-phaseType">
+              <label for="phaseType">Power Connection Type <span class="req">*</span></label>
+              <select id="phaseType" name="phaseType">
+                <option value="">-- Select Connection Type --</option>
+                <option value="Single-Phase">Single-Phase (230V AC)</option>
+                <option value="Three-Phase">Three-Phase (415V AC)</option>
+              </select>
+              <div class="error-msg" id="err-phaseType">Please select Single-Phase or Three-Phase.</div>
+            </div>
+
+            <div class="field-group" id="group-ratedPowerKw">
+              <label for="ratedPowerKw">Charger Rated Power (kW) <span class="req">*</span></label>
+              <select id="ratedPowerKw" name="ratedPowerKw">
+                <option value="">-- Select Charger Rated Power --</option>
+                <option value="3.3">3.3 kW</option>
+                <option value="7.2">7.2 kW</option>
+                <option value="7.4">7.4 kW</option>
+                <option value="11">11.0 kW</option>
+                <option value="22">22.0 kW</option>
+              </select>
+              <div class="error-msg" id="err-ratedPowerKw">Please select the charger's rated power in kW.</div>
+            </div>
+
+            <div class="field-group" id="group-configuredPowerKw">
+              <label for="configuredPowerKw">Configured Charger Power (kW) <span class="req">*</span></label>
+              <input type="number" id="configuredPowerKw" name="configuredPowerKw" step="0.1" min="0.5" max="22" placeholder="e.g., 4.0" />
+              <div class="error-msg" id="err-configuredPowerKw">Please enter a valid configured charger power in kW.</div>
+            </div>
+
+            <div class="field-group">
+              <label for="estimatedCurrentA">Estimated Current (Amps – Auto Calculated)</label>
+              <input type="text" id="estimatedCurrentA" name="estimatedCurrentA" readonly value="0.0 A" />
+            </div>
+
+            <div class="field-group" id="group-chargerMakeModel">
+              <label for="chargerMakeModel">EV Charger Make &amp; Model <span class="req">*</span></label>
+              <input type="text" id="chargerMakeModel" name="chargerMakeModel" placeholder="e.g., Exicom / ABB / OEM Wallbox" />
+              <div class="error-msg" id="err-chargerMakeModel">Please enter the EV charger make and model.</div>
+            </div>
+
+            <div class="field-group" id="group-installerName">
+              <label for="installerName">EV OEM / Authorised Installer / Agency Name <span class="req">*</span></label>
+              <input type="text" id="installerName" name="installerName" placeholder="Installer or OEM agency name" />
+              <div class="error-msg" id="err-installerName">Please enter the installer or OEM agency name.</div>
+            </div>
+
+            <div class="field-group">
+              <label for="licenceNumber">Electrical Licence / Registration No. <span class="opt">(Optional)</span></label>
+              <input type="text" id="licenceNumber" name="licenceNumber" placeholder="Optional contractor licence number" />
+            </div>
+
+            <div class="field-group">
+              <label for="earthingDetails">Protection &amp; Cable Requirement</label>
+              <input type="text" id="earthingDetails" readonly value="Dual MCB (2P/4P) + 30mA RCBO + Armoured Cable + Earthing" />
+            </div>
+          </div>
+
+          <div class="topology-box">
+            <strong>Mandatory Wiring &amp; Protection Rules:</strong>
+            <div>• Tap-off must be taken from the <strong>BESCOM supply side before ACCL</strong>.</div>
+            <div>• Install <strong>2 sets of MCBs</strong> (<strong>2-Pole</strong> for Single-Phase; <strong>4-Pole</strong> for Three-Phase), <strong>30mA RCBO</strong> protection, <strong>armoured cable</strong>, and dedicated earthing.</div>
+            <div class="topology-flow">
+              <span class="node-chip">BESCOM Supply</span>
+              <span>→</span>
+              <span class="node-chip" id="mcbSpecBadge">MCB Set #1 + 30mA RCBO</span>
+              <span>→</span>
+              <span class="node-chip">MCB Set #2 (Charger Side)</span>
+              <span>→</span>
+              <span class="node-chip">EV Charger</span>
+              <span>|</span>
+              <span class="node-chip blocked">No DG Connection – ACCL Bypassed</span>
+            </div>
+          </div>
+
+          <div class="fm-note">
+            <strong>Facility Manager Phase Allocation (Single-Phase Chargers):</strong> For single-phase chargers, the <strong>EERHOA Facility Manager</strong> will specify which phase (<strong>Phase R</strong>, <strong>Phase Y</strong>, or <strong>Phase B</strong>) the charger must be connected to based on the estate load-balancing assessment.
+          </div>
         </div>
 
-        <div class="banner banner-error">
-          Warning: Exceeding your connected load beyond the BESCOM sanctioned load limit will attract heavy penalties from BESCOM.
+        <!-- Section 3 -->
+        <div class="section-card">
+          <h2 class="section-title">Section 3: BESCOM Sanctioned Load &amp; Home Load Headroom</h2>
+
+          <h3 class="subsection-title">3A. Initial BESCOM Sanctioned Load <span class="req">*</span></h3>
+          <div class="grid-2">
+            <div class="field-group" id="group-initialLoadKw">
+              <label for="initialLoadKw">Initial Sanctioned Load for Unit (kW)</label>
+              <input type="number" id="initialLoadKw" name="initialLoadKw" readonly placeholder="Select Unit in Section 1" />
+              <div class="error-msg" id="err-initialLoadKw">Select a Row House unit to populate the initial BESCOM sanctioned load.</div>
+            </div>
+
+            <div class="field-group">
+              <label for="requiredHeadroomKw">Mandatory Reserved Home Load (kW)</label>
+              <input type="text" id="requiredHeadroomKw" readonly value="—" />
+            </div>
+          </div>
+
+          <h3 class="subsection-title">3B. Revised BESCOM Sanctioned Load <span class="opt">(Optional – Only if Additional Load Approved)</span></h3>
+          <div class="checkbox-row">
+            <input type="checkbox" id="hasRevisedLoad" name="hasRevisedLoad" />
+            <label for="hasRevisedLoad">I have obtained revised / additional sanctioned load approval from BESCOM after possession (attached document will be included in the generated PDF).</label>
+          </div>
+
+          <div id="revisedLoadFields" class="hidden">
+            <div class="grid-2">
+              <div class="field-group" id="group-revisedLoadKw">
+                <label for="revisedLoadKw">Total Revised BESCOM Sanctioned Load (kW) <span class="req">*</span></label>
+                <input type="number" id="revisedLoadKw" name="revisedLoadKw" step="0.5" min="1" placeholder="Enter revised kW" />
+                <div class="error-msg" id="err-revisedLoadKw">Please enter the revised total BESCOM sanctioned load in kW.</div>
+              </div>
+
+              <div class="field-group" id="group-approvalFile">
+                <label for="approvalFile">Attach Revised BESCOM Approval (PDF or Image) <span class="req">*</span></label>
+                <input type="file" id="approvalFile" name="approvalFile" accept=".pdf,.png,.jpg,.jpeg,.webp" />
+                <div class="error-msg" id="err-approvalFile">Please attach your BESCOM revised load approval document so it prints with the application.</div>
+              </div>
+            </div>
+            <div id="fileInfoBox" class="hidden" style="font-size: 0.88rem; color: var(--muted); margin-bottom: 10px;"></div>
+          </div>
+
+          <div id="loadValidationBanner" class="banner banner-warn">
+            <strong>Headroom Rule:</strong> Without additional BESCOM load approval, charger configuration must leave at least <strong>3 kW</strong> home load for <strong>7 kW</strong> units, <strong>4 kW</strong> for <strong>9 kW</strong> units, and <strong>5 kW</strong> for <strong>11 kW</strong> units.
+          </div>
+
+          <div class="banner banner-error">
+            Warning: Exceeding your connected load beyond the BESCOM sanctioned load limit will attract heavy penalties from BESCOM.
+          </div>
         </div>
-      </div>
 
-      <!-- Section 4: Mandatory Undertakings -->
-      <div class="section-card">
-        <h2 class="section-title">Section 4: Safety &amp; Compliance Undertakings</h2>
+        <!-- Section 4 -->
+        <div class="section-card">
+          <h2 class="section-title">Section 4: Safety &amp; Compliance Undertakings</h2>
 
-        <div class="checkbox-row" id="group-undertaking16A">
-          <input type="checkbox" id="undertaking16A" name="undertaking16A" />
-          <label for="undertaking16A">
-            <strong>16A Parking Socket Undertaking <span class="req">*</span>:</strong> I state that I will <strong>not use the existing 16A parking socket at all</strong> as it is connected to DG power supply. Any additional socket/charging point will be taken directly from the BESCOM supply (before ACCL) with proper RCBO and MCB protection.
-          </label>
-        </div>
-        <div class="error-msg" id="err-undertaking16A" style="margin-bottom: 10px;">You must accept the 16A parking socket undertaking to proceed.</div>
-
-        <div class="checkbox-row" id="group-undertakingPenalty">
-          <input type="checkbox" id="undertakingPenalty" name="undertakingPenalty" />
-          <label for="undertakingPenalty">
-            <strong>Load Limit &amp; Penalty Undertaking <span class="req">*</span>:</strong> I acknowledge that exceeding my connected load beyond the BESCOM sanctioned load limit will attract heavy penalties from BESCOM, and that installation will follow the ACCL bypass, dual MCB (2P/4P), RCBO, and dedicated earthing requirements.
-          </label>
-        </div>
-        <div class="error-msg" id="err-undertakingPenalty" style="margin-bottom: 10px;">Please confirm the load limit and penalty acknowledgement.</div>
-
-        <div class="checkbox-row" id="group-undertakingDeclaration">
-          <input type="checkbox" id="undertakingDeclaration" name="undertakingDeclaration" />
-          <label for="undertakingDeclaration">
-            <strong>Resident Declaration <span class="req">*</span>:</strong> I declare that the information provided in this digital application is true and accurate, and I authorize EERHOA to record this application and upload my attached document(s) for load and safety review.
-          </label>
-        </div>
-        <div class="error-msg" id="err-undertakingDeclaration" style="margin-bottom: 10px;">Please check the resident declaration box to submit.</div>
-
-        <div class="field-group" style="max-width: 260px;">
-          <label for="submissionDate">Submission Date</label>
-          <input type="date" id="submissionDate" name="submissionDate" readonly />
-        </div>
-
-        <button type="submit" id="submitBtn" class="btn-primary">Submit Digital Application to EERHOA</button>
-        <div id="submitStatus" class="hidden" style="margin-top: 12px;"></div>
-      </div>
-    </form>
-
-    <!-- Digital Receipt / Confirmation View -->
-    <div id="receiptSection" class="receipt-box hidden">
-      <h2 class="section-title">EERHOA Digital EV Charger Application Summary</h2>
-      <div id="receiptContent"></div>
-    </div>
-  </div>
-
-  <script>
-    // Replace this URL with your deployed Google Apps Script Web App URL
-    const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT_ID/exec";
-
-    // Complete 67-unit mapping:
-    // 11 kW: 401-408, 601-608 (16 units)
-    // 9 kW:  101-105, 201-209, 701-712 (26 units)
-    // 7 kW:  301-312, 501-512 (24 units) -> note: verify exact 67 units list as needed
-    const UNIT_LOAD_MAP = {};
-    function registerRange(start, end, kw) {
-      for (let u = start; u <= end; u++) {
-        UNIT_LOAD_MAP[String(u)] = kw;
-      }
-    }
-    registerRange(101, 105, 9);
-    registerRange(201, 209, 9);
-    registerRange(301, 312, 7);
-    registerRange(401, 408, 11);
-    registerRange(501, 512, 7);
-    registerRange(601, 608, 11);
-    registerRange(701, 712, 9);
-
-    const unitSelect = document.getElementById("unitNumber");
-    const initialLoadInput = document.getElementById("initialLoadKw");
-    const requiredHeadroomInput = document.getElementById("requiredHeadroomKw");
-    const phaseSelect = document.getElementById("phaseType");
-    const ratedPowerSelect = document.getElementById("ratedPowerKw");
-    const configuredPowerInput = document.getElementById("configuredPowerKw");
-    const estimatedCurrentInput = document.getElementById("estimatedCurrentA");
-    const mcbSpecBadge = document.getElementById("mcbSpecBadge");
-    const hasRevisedLoadCheckbox = document.getElementById("hasRevisedLoad");
-    const revisedLoadFields = document.getElementById("revisedLoadFields");
-    const revisedLoadInput = document.getElementById("revisedLoadKw");
-    const approvalFileInput = document.getElementById("approvalFile");
-    const fileInfoBox = document.getElementById("fileInfoBox");
-    const loadValidationBanner = document.getElementById("loadValidationBanner");
-    const submissionDateInput = document.getElementById("submissionDate");
-    const form = document.getElementById("evForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const submitStatus = document.getElementById("submitStatus");
-    const receiptSection = document.getElementById("receiptSection");
-    const receiptContent = document.getElementById("receiptContent");
-
-    submissionDateInput.value = new Date().toISOString().split("T")[0];
-
-    // Populate unit dropdown
-    Object.keys(UNIT_LOAD_MAP).sort().forEach((unit) => {
-      const opt = document.createElement("option");
-      opt.value = unit;
-      opt.textContent = `Row House ${unit} (${UNIT_LOAD_MAP[unit]} kW Initial)`;
-      unitSelect.appendChild(opt);
-    });
-
-    function setFieldError(fieldId, message) {
-      const el = document.getElementById(fieldId);
-      const errEl = document.getElementById("err-" + fieldId);
-      const groupEl = document.getElementById("group-" + fieldId);
-      if (el) el.classList.add("is-invalid");
-      if (groupEl && groupEl.classList.contains("checkbox-row")) {
-        groupEl.classList.add("is-invalid");
-      }
-      if (errEl) {
-        if (message) errEl.textContent = message;
-        errEl.classList.add("visible");
-      }
-    }
-
-    function clearFieldError(fieldId) {
-      const el = document.getElementById(fieldId);
-      const errEl = document.getElementById("err-" + fieldId);
-      const groupEl = document.getElementById("group-" + fieldId);
-      if (el) el.classList.remove("is-invalid");
-      if (groupEl && groupEl.classList.contains("checkbox-row")) {
-        groupEl.classList.remove("is-invalid");
-      }
-      if (errEl) {
-        errEl.classList.remove("visible");
-      }
-    }
-
-    // Auto-clear errors as soon as valid input is typed or changed
-    const allTrackedFields = [
-      "unitNumber",
-      "residentName",
-      "email",
-      "phone",
-      "phaseType",
-      "ratedPowerKw",
-      "configuredPowerKw",
-      "chargerMakeModel",
-      "installerName",
-      "initialLoadKw",
-      "revisedLoadKw",
-      "approvalFile",
-      "undertaking16A",
-      "undertakingPenalty",
-      "undertakingDeclaration"
-    ];
-
-    allTrackedFields.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const evtName = (el.type === "checkbox" || el.tagName === "SELECT" || el.type === "file") ? "change" : "input";
-      el.addEventListener(evtName, () => {
-        clearFieldError(id);
-        recalculateAndValidateLive();
-      });
-    });
-
-    function getMandatoryHeadroom(sanctionedKw) {
-      if (sanctionedKw === 7) return 3;
-      if (sanctionedKw === 9) return 4;
-      if (sanctionedKw === 11) return 5;
-      return 0;
-    }
-
-    function recalculateAndValidateLive() {
-      const unit = unitSelect.value;
-      const initialKw = unit ? UNIT_LOAD_MAP[unit] : "";
-      initialLoadInput.value = initialKw;
-
-      const headroomKw = initialKw ? getMandatoryHeadroom(Number(initialKw)) : 0;
-      requiredHeadroomInput.value = initialKw ? `${headroomKw} kW (leaves ${headroomKw} kW for home)` : "—";
-
-      const phase = phaseSelect.value;
-      if (phase === "Single-Phase") {
-        mcbSpecBadge.textContent = "MCB Set #1 (2-Pole) + 30mA RCBO";
-      } else if (phase === "Three-Phase") {
-        mcbSpecBadge.textContent = "MCB Set #1 (4-Pole) + 30mA RCBO";
-      } else {
-        mcbSpecBadge.textContent = "MCB Set #1 + 30mA RCBO";
-      }
-
-      const cfgKw = parseFloat(configuredPowerInput.value);
-      if (!isNaN(cfgKw) && cfgKw > 0 && phase) {
-        const amps = phase === "Three-Phase"
-          ? (cfgKw * 1000) / (Math.sqrt(3) * 415)
-          : (cfgKw * 1000) / 230;
-        estimatedCurrentInput.value = `${amps.toFixed(1)} A`;
-      } else {
-        estimatedCurrentInput.value = "0.0 A";
-      }
-
-      // Revised load toggle
-      const hasRevised = hasRevisedLoadCheckbox.checked;
-      revisedLoadFields.classList.toggle("hidden", !hasRevised);
-
-      const ratedKw = parseFloat(ratedPowerSelect.value);
-      const revisedKw = parseFloat(revisedLoadInput.value);
-      const activeSanctionedKw = hasRevised && !isNaN(revisedKw) && revisedKw > 0
-        ? revisedKw
-        : (initialKw ? Number(initialKw) : NaN);
-
-      if (!isNaN(cfgKw) && cfgKw > 0 && !isNaN(ratedKw) && cfgKw > ratedKw) {
-        loadValidationBanner.className = "banner banner-error";
-        loadValidationBanner.innerHTML = `Configured charger load (${cfgKw} kW) exceeds the selected charger's rated capacity (${ratedKw} kW).`;
-        return { valid: false, reason: "rated" };
-      }
-
-      if (!isNaN(cfgKw) && cfgKw > 0 && !isNaN(activeSanctionedKw)) {
-        if (!hasRevised) {
-          const maxAllowedWithoutUpgrade = Math.max(0, activeSanctionedKw - headroomKw);
-          if (cfgKw > maxAllowedWithoutUpgrade) {
-            loadValidationBanner.className = "banner banner-error";
-            loadValidationBanner.innerHTML = `Configured load (${cfgKw} kW) exceeds allowable limit (${maxAllowedWithoutUpgrade.toFixed(1)} kW) for a ${activeSanctionedKw} kW sanctioned load, which must reserve ${headroomKw} kW for home load unless additional BESCOM load is approved.`;
-            return { valid: false, reason: "headroom" };
-          }
-        } else if (cfgKw > activeSanctionedKw) {
-          loadValidationBanner.className = "banner banner-error";
-          loadValidationBanner.innerHTML = `Configured load (${cfgKw} kW) exceeds your revised BESCOM sanctioned load (${activeSanctionedKw} kW). Exceeding sanctioned load attracts heavy penalties from BESCOM.`;
-          return { valid: false, reason: "revised" };
-        }
-
-        loadValidationBanner.className = "banner banner-ok";
-        loadValidationBanner.innerHTML = `Load check passed: Configured charger load (${cfgKw} kW) fits within your active sanctioned load (${activeSanctionedKw} kW) and headroom rules.`;
-        return { valid: true };
-      }
-
-      loadValidationBanner.className = "banner banner-warn";
-      loadValidationBanner.innerHTML = `<strong>Headroom Rule:</strong> Without additional BESCOM load approval, charger configuration must leave at least <strong>3 kW</strong> home load for <strong>7 kW</strong> units, <strong>4 kW</strong> for <strong>9 kW</strong> units, and <strong>5 kW</strong> for <strong>11 kW</strong> units.`;
-      return { valid: true };
-    }
-
-    approvalFileInput.addEventListener("change", () => {
-      const file = approvalFileInput.files[0];
-      if (!file) {
-        fileInfoBox.classList.add("hidden");
-        fileInfoBox.textContent = "";
-        return;
-      }
-      fileInfoBox.classList.remove("hidden");
-      fileInfoBox.textContent = `Selected file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-    });
-
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64Data = String(reader.result).split(",")[1] || "";
-          resolve({
-            fileName: file.name,
-            mimeType: file.type || "application/octet-stream",
-            base64Data
-          });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // Clear all prior errors first
-      allTrackedFields.forEach((id) => clearFieldError(id));
-
-      const errors = [];
-      const unit = unitSelect.value.trim();
-      const residentName = document.getElementById("residentName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const phase = phaseSelect.value;
-      const ratedKw = parseFloat(ratedPowerSelect.value);
-      const cfgKw = parseFloat(configuredPowerInput.value);
-      const chargerMakeModel = document.getElementById("chargerMakeModel").value.trim();
-      const installerName = document.getElementById("installerName").value.trim();
-      const licenceNumber = document.getElementById("licenceNumber").value.trim();
-      const initialKw = unit ? UNIT_LOAD_MAP[unit] : NaN;
-      const headroomKw = !isNaN(initialKw) ? getMandatoryHeadroom(initialKw) : 0;
-      const hasRevised = hasRevisedLoadCheckbox.checked;
-      const revisedKw = parseFloat(revisedLoadInput.value);
-      const approvalFile = approvalFileInput.files[0];
-
-      if (!unit) errors.push({ id: "unitNumber", msg: "Please select your Row House / Unit number." });
-      if (!residentName) errors.push({ id: "residentName", msg: "Please enter the resident's full name." });
-      if (!email || !email.includes("@")) errors.push({ id: "email", msg: "Please enter a valid email address." });
-      if (!phone || phone.replace(/\D/g, "").length < 10) errors.push({ id: "phone", msg: "Please enter a valid mobile number." });
-      if (!phase) errors.push({ id: "phaseType", msg: "Please select Single-Phase or Three-Phase." });
-      if (isNaN(ratedKw)) errors.push({ id: "ratedPowerKw", msg: "Please select the charger rated power in kW." });
-
-      if (isNaN(cfgKw) || cfgKw <= 0) {
-        errors.push({ id: "configuredPowerKw", msg: "Please enter a valid configured charger power in kW." });
-      } else if (!isNaN(ratedKw) && cfgKw > ratedKw) {
-        errors.push({
-          id: "configuredPowerKw",
-          msg: `Configured power (${cfgKw} kW) cannot exceed charger rated capacity (${ratedKw} kW).`
-        });
-      }
-
-      if (!chargerMakeModel) errors.push({ id: "chargerMakeModel", msg: "Please enter the EV charger make and model." });
-      if (!installerName) errors.push({ id: "installerName", msg: "Please enter the EV OEM / authorised installer / agency name." });
-
-      if (hasRevised) {
-        if (isNaN(revisedKw) || revisedKw <= 0) {
-          errors.push({ id: "revisedLoadKw", msg: "Please enter the revised BESCOM sanctioned load in kW." });
-        }
-        if (!approvalFile) {
-          errors.push({ id: "approvalFile", msg: "Please attach the revised BESCOM load approval document." });
-        } else if (approvalFile.size > 8 * 1024 * 1024) {
-          errors.push({ id: "approvalFile", msg: "File size must be under 8 MB." });
-        }
-      }
-
-      const activeSanctionedKw = hasRevised && !isNaN(revisedKw) && revisedKw > 0 ? revisedKw : initialKw;
-      if (!isNaN(cfgKw) && cfgKw > 0 && !isNaN(activeSanctionedKw)) {
-        if (!hasRevised) {
-          const maxAllowed = Math.max(0, activeSanctionedKw - headroomKw);
-          if (cfgKw > maxAllowed) {
-            errors.push({
-              id: "configuredPowerKw",
-              msg: `Must leave at least ${headroomKw} kW home load (max ${maxAllowed.toFixed(1)} kW for EV charger without BESCOM load upgrade).`
-            });
-          }
-        } else if (cfgKw > activeSanctionedKw) {
-          errors.push({
-            id: "configuredPowerKw",
-            msg: `Configured load (${cfgKw} kW) exceeds revised BESCOM sanctioned load (${activeSanctionedKw} kW).`
-          });
-        }
-      }
-
-      if (!document.getElementById("undertaking16A").checked) {
-        errors.push({ id: "undertaking16A", msg: "You must confirm that the DG-connected 16A parking socket will not be used." });
-      }
-      if (!document.getElementById("undertakingPenalty").checked) {
-        errors.push({ id: "undertakingPenalty", msg: "Please confirm the BESCOM sanctioned load & penalty undertaking." });
-      }
-      if (!document.getElementById("undertakingDeclaration").checked) {
-        errors.push({ id: "undertakingDeclaration", msg: "Please check the resident declaration box to submit." });
-      }
-
-      recalculateAndValidateLive();
-
-      if (errors.length > 0) {
-        errors.forEach((err) => setFieldError(err.id, err.msg));
-        const firstTarget = document.getElementById(errors[0].id);
-        if (firstTarget) {
-          firstTarget.scrollIntoView({ behavior: "smooth", block: "center" });
-          if (typeof firstTarget.focus === "function") {
-            firstTarget.focus({ preventScroll: true });
-          }
-        }
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting Paperless Application...";
-      submitStatus.className = "banner banner-warn";
-      submitStatus.classList.remove("hidden");
-      submitStatus.textContent = "Uploading application details and any BESCOM approval attachment to EERHOA records...";
-
-      let filePayload = null;
-      if (hasRevised && approvalFile) {
-        filePayload = await readFileAsBase64(approvalFile);
-      }
-
-      const payload = {
-        unitNumber: unit,
-        residentName,
-        email,
-        phone,
-        phaseType: phase,
-        ratedPowerKw: ratedKw,
-        configuredPowerKw: cfgKw,
-        estimatedCurrent: estimatedCurrentInput.value,
-        chargerMakeModel,
-        installerName,
-        licenceNumber: licenceNumber || "Not Provided",
-        initialSanctionedLoadKw: initialKw,
-        requiredHomeHeadroomKw: headroomKw,
-        hasRevisedSanctionedLoad: hasRevised,
-        revisedSanctionedLoadKw: hasRevised ? revisedKw : "",
-        activeSanctionedLoadKw: activeSanctionedKw,
-        mcbProtectionSet: phase === "Three-Phase" ? "2 x 4-Pole MCB + 30mA RCBO" : "2 x 2-Pole MCB + 30mA RCBO",
-        dg16ASocketProhibited: true,
-        bescomPenaltyAcknowledged: true,
-        facilityManagerPhaseAllocation: phase === "Single-Phase" ? "Pending FM Assessment (R / Y / B)" : "Three-Phase (R-Y-B)",
-        submissionDate: submissionDateInput.value,
-        attachment: filePayload
-      };
-
-      try {
-        // Send to Google Apps Script Web App
-        const res = await fetch(APPS_SCRIPT_WEB_APP_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        submitStatus.className = "banner banner-ok";
-        submitStatus.innerHTML = `<strong>Submitted Successfully!</strong> Reference ID: <strong>${data.applicationId || "EERHOA-EV"}</strong>. Your application and uploaded document(s) have been recorded digitally.`;
-
-        renderReceipt(payload, data.applicationId || "EERHOA-EV", data.driveFileUrl || "");
-      } catch (err) {
-        submitStatus.className = "banner banner-error";
-        submitStatus.innerHTML = `Could not reach the backend endpoint (${err.message}). Verify your Google Apps Script Web App URL and deployment permissions ("Anyone").`;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Digital Application to EERHOA";
-      }
-    });
-
-    function renderReceipt(p, appId, fileUrl) {
-      receiptSection.classList.remove("hidden");
-      receiptContent.innerHTML = `
-        <p><strong>Application ID:</strong> ${appId} | <strong>Date:</strong> ${p.submissionDate}</p>
-        <p><strong>Unit:</strong> Row House ${p.unitNumber} | <strong>Resident:</strong> ${p.residentName} (${p.email}, ${p.phone})</p>
-        <p><strong>Charger:</strong> ${p.chargerMakeModel} | <strong>Rated:</strong> ${p.ratedPowerKw} kW | <strong>Configured:</strong> ${p.configuredPowerKw} kW (${p.estimatedCurrent})</p>
-        <p><strong>Connection &amp; Protection:</strong> ${p.phaseType} | ${p.mcbProtectionSet} | Tap-off before ACCL (No DG)</p>
-        <p><strong>Sanctioned Load:</strong> Initial ${p.initialSanctionedLoadKw} kW (Reserved Home Headroom: ${p.requiredHomeHeadroomKw} kW)${p.hasRevisedSanctionedLoad ? ` | Revised: ${p.revisedSanctionedLoadKw} kW` : ""}</p>
-        <p><strong>Installer / OEM:</strong> ${p.installerName} (Licence: ${p.licenceNumber})</p>
-        <p><strong>BESCOM Approval Attachment:</strong> ${p.attachment ? `${p.attachment.fileName}${fileUrl ? ` — <a href="${fileUrl}" target="_blank" rel="noopener noreferrer">View in Drive</a>` : " (Stored in Drive)"}` : "None (Initial Sanctioned Load)"}</p>
-        <p><strong>Facility Manager Phase Allocation:</strong> ${p.facilityManagerPhaseAllocation}</p>
-        <div class="banner banner-error" style="margin-top:12px;">
-          Warning: Exceeding your connected load beyond the BESCOM sanctioned load limit will attract heavy penalties from BESCOM. Existing 16A parking socket (DG supply) must not be used.
-        </div>
-      `;
-      receiptSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  </script>
-</body>
-</html>
+          <div class="checkbox-row" id="group-undertaking16A">
+            <input type="checkbox" id="undertaking16A" name="undertaking16A" />
+            <label for="undertaking16A">
+              <strong>16A Parking Socket Undertaking <span class="req">*</span>:</strong> I state that I will <strong>not use the existing
