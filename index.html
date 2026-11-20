@@ -1,0 +1,133 @@
+const SHEET_ID = "REPLACE_WITH_YOUR_GOOGLE_SHEET_ID";
+const SHEET_NAME = "EV_Charger_Applications";
+const DRIVE_FOLDER_ID = "REPLACE_WITH_YOUR_GOOGLE_DRIVE_FOLDER_ID";
+const EERHOA_OFFICE_EMAIL = "office@eerhoa.co.in";
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const appId = "EERHOA-EV-" + Utilities.formatDate(new Date(), "Asia/Kolkata", "yyyyMMdd-HHmmss");
+    const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+
+    let uploadedFileUrl = "";
+    let uploadedFileName = "";
+
+    // Store attached BESCOM revised load approval document in Google Drive
+    if (payload.attachment && payload.attachment.base64Data) {
+      const decoded = Utilities.base64Decode(payload.attachment.base64Data);
+      const blob = Utilities.newBlob(
+        decoded,
+        payload.attachment.mimeType || "application/pdf",
+        `Unit_${payload.unitNumber}_${appId}_${payload.attachment.fileName}`
+      );
+      const savedFile = folder.createFile(blob);
+      uploadedFileUrl = savedFile.getUrl();
+      uploadedFileName = savedFile.getName();
+    }
+
+    // Log application in Google Sheet for MC and Facility Manager
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.insertSheet(SHEET_NAME);
+      sheet.appendRow([
+        "Application ID",
+        "Timestamp (IST)",
+        "Submission Date",
+        "Unit Number",
+        "Resident Name",
+        "Email",
+        "Phone",
+        "Phase Type",
+        "Rated Power (kW)",
+        "Configured Power (kW)",
+        "Estimated Current",
+        "Charger Make/Model",
+        "Installer / OEM",
+        "Licence No.",
+        "Initial Sanctioned Load (kW)",
+        "Reserved Home Headroom (kW)",
+        "Revised Load Applied",
+        "Revised Sanctioned Load (kW)",
+        "Protection Spec",
+        "16A DG Socket Prohibited",
+        "BESCOM Penalty Acknowledged",
+        "Attachment File Name",
+        "Attachment Drive URL",
+        "Facility Manager Phase Allocation (R/Y/B)",
+        "FM Verification Status"
+      ]);
+    }
+
+    sheet.appendRow([
+      appId,
+      Utilities.formatDate(new Date(), "Asia/Kolkata", "yyyy-MM-dd HH:mm:ss"),
+      payload.submissionDate || "",
+      payload.unitNumber || "",
+      payload.residentName || "",
+      payload.email || "",
+      payload.phone || "",
+      payload.phaseType || "",
+      payload.ratedPowerKw || "",
+      payload.configuredPowerKw || "",
+      payload.estimatedCurrent || "",
+      payload.chargerMakeModel || "",
+      payload.installerName || "",
+      payload.licenceNumber || "",
+      payload.initialSanctionedLoadKw || "",
+      payload.requiredHomeHeadroomKw || "",
+      payload.hasRevisedSanctionedLoad ? "Yes" : "No",
+      payload.revisedSanctionedLoadKw || "",
+      payload.mcbProtectionSet || "",
+      payload.dg16ASocketProhibited ? "Yes" : "No",
+      payload.bescomPenaltyAcknowledged ? "Yes" : "No",
+      uploadedFileName,
+      uploadedFileUrl,
+      "", // Facility Manager fills R, Y, or B after load-balancing check
+      "Pending FM Phase & Tap-Off Check"
+    ]);
+
+    // Email digital confirmation to resident and EERHOA office
+    const subject = `[EERHOA] EV Charger Application Logged – Unit ${payload.unitNumber} (${appId})`;
+    const body = [
+      `Dear ${payload.residentName},`,
+      ``,
+      `Your digital EV Charger Installation Application for Row House ${payload.unitNumber} has been logged with EERHOA.`,
+      `Application ID: ${appId}`,
+      `Charger: ${payload.chargerMakeModel} | Rated: ${payload.ratedPowerKw} kW | Configured: ${payload.configuredPowerKw} kW (${payload.estimatedCurrent})`,
+      `Connection & Protection: ${payload.phaseType} | ${payload.mcbProtectionSet} (Tap-off before ACCL; No DG connection)`,
+      `Sanctioned Load: Initial ${payload.initialSanctionedLoadKw} kW (Reserved Home Headroom: ${payload.requiredHomeHeadroomKw} kW)${payload.hasRevisedSanctionedLoad ? ` | Revised: ${payload.revisedSanctionedLoadKw} kW` : ""}`,
+      uploadedFileUrl ? `Uploaded BESCOM Approval Document: ${uploadedFileUrl}` : `Uploaded BESCOM Approval Document: None`,
+      ``,
+      `Facility Manager Action Required: Please review and allocate the phase (R / Y / B) for single-phase chargers based on load balancing and verify tap-off before ACCL.`,
+      ``,
+      `Reminder: Exceeding your connected load beyond the BESCOM sanctioned load limit will attract heavy penalties from BESCOM. Existing 16A parking sockets (on DG supply) must not be used.`,
+      ``,
+      `Regards,`,
+      `Assetz Earth & Essence Row House Owners Association (EERHOA)`
+    ].join("\n");
+
+    MailApp.sendEmail({
+      to: payload.email,
+      cc: EERHOA_OFFICE_EMAIL,
+      subject: subject,
+      body: body
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        status: "ok",
+        applicationId: appId,
+        driveFileUrl: uploadedFileUrl
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({
+        status: "error",
+        message: err.message
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
